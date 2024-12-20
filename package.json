@@ -9,15 +9,10 @@
     "lint": "next lint",
     "prepare": "husky"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
+    "**/*.{js,jsx,ts,tsx}": [
+      "prettier src --write",
+      "eslint --fix src"
     ]
   },
   "dependencies": {
