@@ -1,30 +1,29 @@
 import { Toaster } from '@/components/ui/toaster'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from '@/hooks/use-toast'
 import { apiInstance } from '@/lib/utils'
 import axios from 'axios'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 interface FormInput {
-  username: string
   email: string
   password: string
 }
 
-const Register = () => {
-  const { toast } = useToast()
+const Login = () => {
   const { register, handleSubmit } = useForm<FormInput>()
-  const onSubmit = (data: FormInput) => {
-    getUser(data)
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    login(data)
     console.log(data)
   }
 
-  const getUser = async (reqBody: FormInput) => {
+  const login = async (data: FormInput) => {
     try {
-      const res = await apiInstance.post('/register', reqBody)
+      const res = await apiInstance.post('/login', data)
       toast({
         description: res.data.message,
       })
       console.log(res)
+      localStorage.setItem('token', res.data.data.token)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast({
@@ -38,12 +37,11 @@ const Register = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 max-w-screen-md">
-      <p>register page</p>
+    <div>
+      <p>login</p>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
-        <input {...register('username')} />
-        <input {...register('password')} />
         <input {...register('email')} />
+        <input {...register('password')} />
         <input type="submit" />
       </form>
       <Toaster />
@@ -51,4 +49,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default Login
