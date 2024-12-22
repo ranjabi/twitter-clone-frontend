@@ -96,7 +96,7 @@ const Home = () => {
   const {
     isPending: isPendingFeed,
     isError: isErrorFeed,
-    data: dataFeed
+    data: dataFeed,
   } = useQuery({
     queryKey: ['feed'],
     queryFn: () => getFeed(token),
@@ -107,14 +107,14 @@ const Home = () => {
     mutationFn: (data: FormInput) => createTweet(data),
     onSettled: async () => {
       return await queryClient.invalidateQueries({ queryKey: ['feed'] })
-    }
+    },
   })
 
   const deleteTweetMutation = useMutation({
     mutationFn: (id: number) => deleteTweet(id),
     onSettled: async () => {
       return await queryClient.invalidateQueries({ queryKey: ['feed'] })
-    }
+    },
   })
 
   if (isPendingFeed) {
@@ -128,19 +128,28 @@ const Home = () => {
   return (
     <div>
       <Toaster />
-      <div className='flex border p-4'>
+      <div className="flex border p-4">
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col ml-3 w-full'>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col ml-3 w-full"
+        >
           <Textarea
             maxLength={280}
-            className='md:text-2xl border-none focus-visible:ring-0 resize-none h-28'
-            placeholder='What is happening?!'
+            className="md:text-2xl border-none focus-visible:ring-0 resize-none h-28"
+            placeholder="What is happening?!"
             {...register('content', { required: 'Please enter tweet' })}
           />
-          <Button type='submit' size={'lg'} className='self-end rounded-3xl font-extrabold px-5 mt-4'>Post</Button>
+          <Button
+            type="submit"
+            size={'lg'}
+            className="self-end rounded-3xl font-extrabold px-5 mt-4"
+          >
+            Post
+          </Button>
         </form>
       </div>
       <div>
@@ -151,15 +160,15 @@ const Home = () => {
               key={tweet.id}
               tweet={{
                 id: tweet.id,
-                userFullName: "full name",
-                username: "kevin",
+                userFullName: 'full name',
+                username: 'kevin',
                 content: tweet.content,
                 date: tweet.createdAt,
                 replyCount: 0,
                 retweetCount: 0,
                 likeCount: tweet.likeCount,
                 isLiked: tweet.isLiked,
-                userId: tweet.userId
+                userId: tweet.userId,
               }}
               userId={user?.id}
               deleteTweetMutation={deleteTweetMutation}

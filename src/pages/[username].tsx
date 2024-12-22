@@ -1,5 +1,5 @@
+import ProfileHeader from '@/components/profileHeader'
 import TweetItem from '@/components/tweet/tweetItem'
-import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/hooks/use-toast'
 import { Profile } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 
 const ProfilePage = () => {
   const router = useRouter()
-  const {username} = router.query
+  const { username } = router.query
 
   const getToken = useAuthStore((state) => state.getToken)
   const getUser = useAuthStore((state) => state.getUser)
@@ -54,22 +54,30 @@ const ProfilePage = () => {
 
   return (
     <div>
-      <Toaster />
+      {data && (
+        <ProfileHeader
+          id={data.id}
+          fullName="full Name"
+          username={data.username}
+          followerCount={data.followerCount}
+          followingCount={data.followingCount}
+        />
+      )}
       {data?.recentTweets.map((tweet) => {
         return (
           <TweetItem
             key={tweet.id}
             tweet={{
               id: tweet.id,
-              userFullName: "full name",
-              username: "kevin",
+              userFullName: 'full name',
+              username: 'kevin',
               content: tweet.content,
               date: tweet.createdAt,
               replyCount: 0,
               retweetCount: 0,
               likeCount: tweet.likeCount,
               isLiked: tweet.isLiked,
-              userId: tweet.userId
+              userId: tweet.userId,
             }}
             userId={user?.id}
           />

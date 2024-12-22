@@ -22,3 +22,11 @@ export interface Profile {
   recentTweetsLength: number
   recentTweets: Tweet[]
 }
+
+export interface ProfileHeader {
+  id: number
+  fullName: string
+  username: string
+  followerCount: number
+  followingCount: number
+}
