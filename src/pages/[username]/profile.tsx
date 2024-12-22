@@ -1,4 +1,3 @@
-import TweetItem from '@/components/tweet/tweetItem'
 import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/hooks/use-toast'
 import { Tweet } from '@/interfaces/interfaces'
@@ -6,23 +5,20 @@ import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-const Feed = () => {
+const Profile = () => {
+  const router = useRouter()
+
   const getToken = useAuthStore((state) => state.getToken)
   const getUser = useAuthStore((state) => state.getUser)
   const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
 
-  const getFeed = async (
-    token: string | undefined,
-  ): Promise<Tweet[] | undefined> => {
+  const getProfile = async (): Promise<Tweet[] | undefined> => {
     try {
-      const res = await apiInstance({ token }).get(`/users/${user?.id}/feed`, {
-        params: {
-          page: 1,
-        },
-      })
+      const res = await apiInstance({ token }).get(`/users/${user?.id}`)
       return res.data.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -41,8 +37,12 @@ const Feed = () => {
   }, [getToken, getUser])
 
   const { isPending, isError, data } = useQuery({
-    queryKey: ['feed', token],
-    queryFn: () => getFeed(token),
+    queryKey: ['profile'],
+    // queryFn: ({ queryKey }) => {
+    //   const [, token] = queryKey as [string, string];
+    //   return getFeed(token);
+    // },
+    queryFn: getProfile,
     enabled: !!token,
   })
 
@@ -57,23 +57,12 @@ const Feed = () => {
   return (
     <div>
       <Toaster />
-      {data?.map((tweet) => {
-        return (
-          <TweetItem
-            key={tweet.id}
-            id={tweet.id}
-            userFullName="full name"
-            username="kevin"
-            content={tweet.content}
-            date={tweet.createdAt}
-            replyCount={0}
-            retweetCount={0}
-            likeCount={0}
-          />
-        )
-      })}
+      <h1>user profile id: {router.query.username}</h1>
+      <p>token: {JSON.stringify(token) || 'undefined'}</p>
+      <p>user: {JSON.stringify(user) || 'undefined'}</p>
+      <p>profile: {JSON.stringify(data)}</p>
     </div>
   )
 }
 
-export default Feed
+export default Profile
