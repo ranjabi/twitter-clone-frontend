@@ -29,7 +29,6 @@ const Login = () => {
     try {
       const res = await apiInstance({}).post('/login', data)
       toast({
-        variant: 'success',
         description: res.data.message,
       })
       console.log(res)
