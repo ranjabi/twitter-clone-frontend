@@ -6,6 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const apiInstance = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
-})
+interface InstanceParm {
+  token?: string
+}
+
+export const apiInstance = (instanceParm: InstanceParm) =>
+  axios.create({
+    baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+    headers: { Authorization: `Bearer ${instanceParm.token}` },
+  })
