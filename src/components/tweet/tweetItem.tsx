@@ -21,7 +21,7 @@ const TweetItem = (
     {
       tweet: Tweet,
       userId: number | undefined,
-      deleteTweetMutation: UseMutationResult<void, Error, number, unknown
+      deleteTweetMutation?: UseMutationResult<void, Error, number, unknown
       >;
     }
 ) => {
@@ -46,7 +46,7 @@ const TweetItem = (
               <Trash2
                 size={20}
                 className='stroke-muted hover:stroke-muted-foreground hover:cursor-pointer'
-                onClick={() => deleteTweetMutation.mutate(tweet.id)}
+                onClick={() => deleteTweetMutation?.mutate(tweet.id)}
               />
               // </Button>
             )}

@@ -1,6 +1,7 @@
+import TweetItem from '@/components/tweet/tweetItem'
 import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/hooks/use-toast'
-import { Tweet } from '@/interfaces/interfaces'
+import { Profile } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
 import { useQuery } from '@tanstack/react-query'
@@ -8,17 +9,18 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-const Profile = () => {
+const ProfilePage = () => {
   const router = useRouter()
+  const {username} = router.query
 
   const getToken = useAuthStore((state) => state.getToken)
   const getUser = useAuthStore((state) => state.getUser)
   const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
 
-  const getProfile = async (): Promise<Tweet[] | undefined> => {
+  const getProfile = async (): Promise<Profile | undefined> => {
     try {
-      const res = await apiInstance({ token }).get(`/users/${user?.id}`)
+      const res = await apiInstance({ token }).get(`/users/${username}`)
       return res.data.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -38,12 +40,8 @@ const Profile = () => {
 
   const { isPending, isError, data } = useQuery({
     queryKey: ['profile'],
-    // queryFn: ({ queryKey }) => {
-    //   const [, token] = queryKey as [string, string];
-    //   return getFeed(token);
-    // },
     queryFn: getProfile,
-    enabled: !!token,
+    enabled: !!token && !!username,
   })
 
   if (isPending) {
@@ -57,12 +55,28 @@ const Profile = () => {
   return (
     <div>
       <Toaster />
-      <h1>user profile id: {router.query.username}</h1>
-      <p>token: {JSON.stringify(token) || 'undefined'}</p>
-      <p>user: {JSON.stringify(user) || 'undefined'}</p>
-      <p>profile: {JSON.stringify(data)}</p>
+      {data?.recentTweets.map((tweet) => {
+        return (
+          <TweetItem
+            key={tweet.id}
+            tweet={{
+              id: tweet.id,
+              userFullName: "full name",
+              username: "kevin",
+              content: tweet.content,
+              date: tweet.createdAt,
+              replyCount: 0,
+              retweetCount: 0,
+              likeCount: tweet.likeCount,
+              isLiked: tweet.isLiked,
+              userId: tweet.userId
+            }}
+            userId={user?.id}
+          />
+        )
+      })}
     </div>
   )
 }
 
-export default Profile
+export default ProfilePage

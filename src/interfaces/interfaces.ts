@@ -14,11 +14,11 @@ export interface Tweet {
   isLiked: boolean
 }
 
-// export interface Profile {
-//   id: number
-//   username: string
-//   followerCount: number
-//   followingCount: number
-//   recentTweetsLength: number
-//   recentTweets: Tweet[]
-// }
+export interface Profile {
+  id: number
+  username: string
+  followerCount: number
+  followingCount: number
+  recentTweetsLength: number
+  recentTweets: Tweet[]
+}
