@@ -11,15 +11,16 @@ interface Tweet {
   replyCount: number
   retweetCount: number
   likeCount: number
+  isLiked: boolean
 }
 
 const TweetItem = (tweet: Tweet) => {
   return (
     <div className="border flex p-4">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+      <Avatar>
+        <AvatarImage src="https://github.com/shadcn.png" />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
       <div className="flex flex-col ml-3">
         <div className="flex gap-x-2">
           <p>{tweet.userFullName}</p>
@@ -32,22 +33,25 @@ const TweetItem = (tweet: Tweet) => {
         </div>
         <div className="flex justify-between mr-32">
           <div className="flex items-center">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className='hover:bg-transparent'>
               <MessageCircle />
             </Button>
             <p className="-ml-1">{tweet.replyCount}</p>
           </div>
           <div className="flex items-center">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className='hover:bg-transparent'>
               <Repeat2 />
             </Button>
             <p className="-ml-1">{tweet.retweetCount}</p>
           </div>
-          <div className="flex items-center">
-            <Button variant="ghost" size="icon">
-              <Heart />
+          <div className="flex items-center self-end">
+            <Button variant="ghost" size="icon" className='hover:bg-transparent stroke-white hover:fill-rose-500 hover:stroke-rose-500'>
+              <Heart
+                fill={tweet.isLiked ? '#f43f5e' : undefined}
+                stroke={tweet.isLiked ? '#f43f5e' : undefined}
+              />
             </Button>
-            <p className="-ml-1">{tweet.likeCount}</p>
+            <p className={`-ml-1 ${tweet.isLiked ? 'text-rose-500' : ''}`}>{tweet.likeCount}</p>
           </div>
         </div>
       </div>

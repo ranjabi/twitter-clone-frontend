@@ -69,6 +69,7 @@ const Feed = () => {
             replyCount={0}
             retweetCount={0}
             likeCount={0}
+            isLiked={tweet.isLiked}
           />
         )
       })}
