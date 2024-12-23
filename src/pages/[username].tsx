@@ -4,15 +4,15 @@ import { toast } from '@/hooks/use-toast'
 import { Profile } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
 const ProfilePage = () => {
   const router = useRouter()
   const { username } = router.query
-
   const user = useAuthStore((state) => state.user)
+  const queryClient = useQueryClient()
 
   const getProfile = async (): Promise<Profile | undefined> => {
     try {
@@ -30,7 +30,7 @@ const ProfilePage = () => {
   }
 
   const { isPending, isError, data } = useQuery({
-    queryKey: ['profile'],
+    queryKey: ['profile', username],
     queryFn: getProfile,
     enabled: !!username,
   })
@@ -48,10 +48,12 @@ const ProfilePage = () => {
       {data && (
         <ProfileHeader
           id={data.id}
-          fullName="full Name"
+          fullName={data.username}
           username={data.username}
           followerCount={data.followerCount}
           followingCount={data.followingCount}
+          isFollowed={data.isFollowed}
+          queryClient={queryClient}
         />
       )}
       {data?.recentTweets.map((tweet) => {
@@ -60,8 +62,8 @@ const ProfilePage = () => {
             key={tweet.id}
             tweet={{
               id: tweet.id,
-              userFullName: 'full name',
-              username: 'kevin',
+              userFullName: tweet.username,
+              username: tweet.username,
               content: tweet.content,
               date: tweet.createdAt,
               replyCount: 0,

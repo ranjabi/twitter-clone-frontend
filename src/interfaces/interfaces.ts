@@ -1,3 +1,5 @@
+import { QueryClient } from '@tanstack/react-query'
+
 export interface User {
   id: number
   username: string
@@ -22,6 +24,7 @@ export interface Profile {
   followingCount: number
   recentTweetsLength: number
   recentTweets: Tweet[]
+  isFollowed: boolean
 }
 
 export interface ProfileHeader {
@@ -30,4 +33,6 @@ export interface ProfileHeader {
   username: string
   followerCount: number
   followingCount: number
+  isFollowed: boolean
+  queryClient: QueryClient
 }
