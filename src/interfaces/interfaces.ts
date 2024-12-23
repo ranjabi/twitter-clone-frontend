@@ -7,11 +7,12 @@ export interface User {
 export interface Tweet {
   id: number
   content: string
-  createdAt: string
-  modifiedAt: string
+  createdAt: Date
+  modifiedAt: Date
   userId: number
   likeCount: number
   isLiked: boolean
+  username: string
 }
 
 export interface Profile {

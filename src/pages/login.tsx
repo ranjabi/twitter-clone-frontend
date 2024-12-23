@@ -32,7 +32,7 @@ const Login = () => {
 
   const login = async (data: FormInput) => {
     try {
-      const res = await apiInstance({}).post('/login', data)
+      const res = await apiInstance.post('/login', data)
       toast({
         description: res.data.message,
       })
@@ -44,6 +44,8 @@ const Login = () => {
       }
       setToken(res.data.data.token)
       setUser(user)
+      apiInstance.defaults.headers.common['Authorization'] =
+        'Bearer ' + res.data.data.token
       router.push('/')
     } catch (error) {
       if (axios.isAxiosError(error)) {

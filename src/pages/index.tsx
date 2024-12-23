@@ -8,21 +8,20 @@ import axios from 'axios'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import UserAvatar from '@/components/user-avatar'
 
 interface FormInput {
   content: string
 }
 
 const Home = () => {
-  const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
   const { register, handleSubmit } = useForm<FormInput>()
   const queryClient = useQueryClient()
 
   const createTweet = async (data: FormInput) => {
     try {
-      const res = await apiInstance({ token }).post(`/tweets`, {
+      const res = await apiInstance.post(`/tweets`, {
         content: data.content,
       })
       toast({
@@ -43,7 +42,7 @@ const Home = () => {
 
   const deleteTweet = async (id: number) => {
     try {
-      const res = await apiInstance({ token }).delete(`/tweets/${id}`)
+      const res = await apiInstance.delete(`/tweets/${id}`)
       toast({
         description: res.data.message,
       })
@@ -63,11 +62,9 @@ const Home = () => {
     addTweetMutation.mutate(data)
   }
 
-  const getFeed = async (
-    token: string | undefined,
-  ): Promise<Tweet[] | undefined> => {
+  const getFeed = async (): Promise<Tweet[] | undefined> => {
     try {
-      const res = await apiInstance({ token }).get(`/users/${user?.id}/feed`, {
+      const res = await apiInstance.get(`/users/${user?.id}/feed`, {
         params: {
           page: 1,
         },
@@ -90,8 +87,7 @@ const Home = () => {
     data: dataFeed,
   } = useQuery({
     queryKey: ['feed'],
-    queryFn: () => getFeed(token),
-    enabled: !!token,
+    queryFn: getFeed,
   })
 
   const addTweetMutation = useMutation({
@@ -119,10 +115,7 @@ const Home = () => {
   return (
     <>
       <div className="flex border p-4">
-        <Avatar>
-          <AvatarImage src="/default-avatar.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <UserAvatar userId={user?.id} />
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col ml-3 w-full"
@@ -148,8 +141,8 @@ const Home = () => {
             key={tweet.id}
             tweet={{
               id: tweet.id,
-              userFullName: 'full name',
-              username: 'kevin',
+              userFullName: tweet.username,
+              username: tweet.username,
               content: tweet.content,
               date: tweet.createdAt,
               replyCount: 0,

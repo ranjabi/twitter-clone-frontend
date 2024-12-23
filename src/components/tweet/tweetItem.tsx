@@ -1,14 +1,14 @@
 import { Heart, MessageCircle, Repeat2, Trash2 } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
 import { UseMutationResult } from '@tanstack/react-query'
+import UserAvatar from '../user-avatar'
 
 interface Tweet {
   id: number
   userFullName: string
   username: string
   content: string
-  date: string
+  date: Date
   replyCount: number
   retweetCount: number
   likeCount: number
@@ -24,17 +24,19 @@ const TweetItem = (props: {
   const { tweet, userId, deleteTweetMutation } = props
   return (
     <div className="border flex p-4">
-      <Avatar>
-        <AvatarImage src="/default-avatar.png" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
+      <UserAvatar userId={tweet.userId} />
       <div className="flex flex-col ml-3 w-full">
         <div className="flex justify-between gap-x-2">
           <div className="flex w-full">
             <p>{tweet.userFullName}</p>
-            <p>@{tweet.username}</p>
-            <p>·</p>
-            <p>{tweet.date}</p>
+            <p className="ml-2">@{tweet.username}</p>
+            <p className="ml-1">·</p>
+            <p className="ml-1">
+              {new Date(tweet.date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              })}
+            </p>
           </div>
           {tweet.userId === userId && (
             // <Button variant="ghost" size="lg" className='hover:bg-transparent stroke-white hover:fill-rose-500 hover:stroke-rose-500'>
@@ -46,7 +48,7 @@ const TweetItem = (props: {
             // </Button>
           )}
         </div>
-        <div className="flex flex-col mt-2">
+        <div className="flex flex-col mt-[2]">
           <p>{tweet.content}</p>
         </div>
         <div className="flex justify-between mr-32">

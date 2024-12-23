@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { useAuthStore } from '@/stores/useAuth'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useRouter } from 'next/router'
+import UserAvatar from './user-avatar'
 
 const AppSidebar = () => {
   const user = useAuthStore((state) => state.user)
@@ -61,13 +61,7 @@ const AppSidebar = () => {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-16">
                   <div className="flex w-full">
-                    <div className="relative">
-                      <div className="w-10 h-10 bg-blue-500 absolute rounded-full z-10 opacity-50"></div>
-                      <Avatar>
-                        <AvatarImage src="/default-avatar.png" />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
-                    </div>
+                    <UserAvatar userId={user?.id} classname="w-10 h-10 -mt-1" />
                     <div className="ml-3">
                       <p>@{user?.username}</p>
                     </div>

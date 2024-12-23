@@ -4,6 +4,7 @@ import AppSidebar from './app-sidebar'
 import { useAuthStore } from '@/stores/useAuth'
 import { Toaster } from './ui/toaster'
 import { useRouter } from 'next/router'
+import { apiInstance } from '@/lib/utils'
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
@@ -20,6 +21,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
     if (userLocalStorage && tokenLocalStorage) {
       setUser(JSON.parse(userLocalStorage))
       setToken(tokenLocalStorage)
+      apiInstance.defaults.headers.common['Authorization'] =
+        'Bearer ' + tokenLocalStorage
     }
     setIsReady(true)
   }, [setIsReady, setUser, setToken])

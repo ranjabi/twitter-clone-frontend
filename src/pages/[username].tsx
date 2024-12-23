@@ -12,12 +12,11 @@ const ProfilePage = () => {
   const router = useRouter()
   const { username } = router.query
 
-  const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
 
   const getProfile = async (): Promise<Profile | undefined> => {
     try {
-      const res = await apiInstance({ token }).get(`/users/${username}`)
+      const res = await apiInstance.get(`/users/${username}`)
       return res.data.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -33,7 +32,7 @@ const ProfilePage = () => {
   const { isPending, isError, data } = useQuery({
     queryKey: ['profile'],
     queryFn: getProfile,
-    enabled: !!token && !!username,
+    enabled: !!username,
   })
 
   if (isPending) {

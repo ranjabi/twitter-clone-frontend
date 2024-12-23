@@ -1,15 +1,13 @@
 import { ProfileHeader } from '@/interfaces/interfaces'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import UserAvatar from './user-avatar'
 
 const ProfileHeaderSection = (props: ProfileHeader) => {
   return (
     <>
       <div className="flex flex-col pb-8">
         <div className="bg-gray-500 h-56"></div>
-        <Avatar className="h-32 w-32 -mt-16 ml-4">
-          <AvatarImage src="/default-avatar.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+
+        <UserAvatar userId={props.id} classname="h-32 w-32 -mt-16 ml-4" />
         <div className="px-4 mt-4">
           <p className="text-xl font-extrabold">{props.fullName}</p>
           <p className="text-sm">@{props.username}</p>
