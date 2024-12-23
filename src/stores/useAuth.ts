@@ -7,6 +7,7 @@ interface AuthState {
   getTokenFromLocalStorage: () => void
   setTokenToLocalStorage: (token: string) => void
   user: User | undefined
+  isFinished: () => boolean
   getUser: () => User | undefined
   // auth = token and user
   setAuth: (token: string, user: User) => void
@@ -16,8 +17,11 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  token: '',
+  token: undefined,
   user: undefined,
+  isFinished: () => {
+    return get().user !== undefined && get().token !== undefined
+  },
   getTokenFromLocalStorage: () => {
     const localStorageToken = localStorage.getItem('token')
     if (localStorageToken != null) {
@@ -52,6 +56,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   clearAuth: () => {
     console.log('token clear')
     localStorage.removeItem('token')
-    set({ token: undefined })
+    localStorage.removeItem('user')
+    set({ token: undefined, user: undefined })
   },
 }))

@@ -1,7 +1,5 @@
 import { useAuthStore } from '@/stores/useAuth'
-import { useEffect } from 'react'
 import TweetItem from '@/components/tweet/tweetItem'
-import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/hooks/use-toast'
 import { Tweet } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
@@ -17,17 +15,10 @@ interface FormInput {
 }
 
 const Home = () => {
-  const getToken = useAuthStore((state) => state.getToken)
-  const getUser = useAuthStore((state) => state.getUser)
   const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
   const { register, handleSubmit } = useForm<FormInput>()
   const queryClient = useQueryClient()
-
-  useEffect(() => {
-    getToken()
-    getUser()
-  }, [getToken, getUser])
 
   const createTweet = async (data: FormInput) => {
     try {
@@ -126,8 +117,7 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <Toaster />
+    <>
       <div className="flex border p-4">
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />
@@ -152,31 +142,28 @@ const Home = () => {
           </Button>
         </form>
       </div>
-      <div>
-        <Toaster />
-        {dataFeed?.map((tweet) => {
-          return (
-            <TweetItem
-              key={tweet.id}
-              tweet={{
-                id: tweet.id,
-                userFullName: 'full name',
-                username: 'kevin',
-                content: tweet.content,
-                date: tweet.createdAt,
-                replyCount: 0,
-                retweetCount: 0,
-                likeCount: tweet.likeCount,
-                isLiked: tweet.isLiked,
-                userId: tweet.userId,
-              }}
-              userId={user?.id}
-              deleteTweetMutation={deleteTweetMutation}
-            />
-          )
-        })}
-      </div>
-    </div>
+      {dataFeed?.map((tweet) => {
+        return (
+          <TweetItem
+            key={tweet.id}
+            tweet={{
+              id: tweet.id,
+              userFullName: 'full name',
+              username: 'kevin',
+              content: tweet.content,
+              date: tweet.createdAt,
+              replyCount: 0,
+              retweetCount: 0,
+              likeCount: tweet.likeCount,
+              isLiked: tweet.isLiked,
+              userId: tweet.userId,
+            }}
+            userId={user?.id}
+            deleteTweetMutation={deleteTweetMutation}
+          />
+        )
+      })}
+    </>
   )
 }
 
