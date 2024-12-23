@@ -1,47 +1,50 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import AppSidebar from './app-sidebar'
-// import { useRouter } from 'next/router'
 import { useAuthStore } from '@/stores/useAuth'
 import { Toaster } from './ui/toaster'
+import { useRouter } from 'next/router'
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const token = useAuthStore((state) => state.token)
-  const user = useAuthStore((state) => state.user)
-  // const router = useRouter()
+  const router = useRouter()
 
-  // const getToken = useAuthStore((state) => state.getToken)
-  // const getUser = useAuthStore((state) => state.getUser)
-  // const isFinished = useAuthStore((state) => state.isFinished)
+  const setToken = useAuthStore((state) => state.setToken)
+  const setUser = useAuthStore((state) => state.setUser)
+  const isReady = useAuthStore((state) => state.isReady)
+  const setIsReady = useAuthStore((state) => state.setIsReady)
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
 
-  // useEffect(() => {
-  //   if ((!getToken() && !getUser())) {
-  //     router.push('/login')
-  //   }
-  // }, [getToken, getUser, router])
+  useEffect(() => {
+    const userLocalStorage = localStorage.getItem('user')
+    const tokenLocalStorage = localStorage.getItem('token')
+    if (userLocalStorage && tokenLocalStorage) {
+      setUser(JSON.parse(userLocalStorage))
+      setToken(tokenLocalStorage)
+    }
+    setIsReady(true)
+  }, [setIsReady, setUser, setToken])
 
-  console.log('user === undefined', user === undefined)
-  console.log('token === undefined', token === undefined)
-
-  // useEffect(() => {
-  //   if ((user !== undefined || token !== undefined)) {
-  //     router.push('/login')
-  //   }
-  // }, [router, user, token])
+  useEffect(() => {
+    if (isReady) {
+      if (!isLoggedIn()) {
+        router.push('/login')
+      }
+    }
+  }, [isReady, isLoggedIn, router])
 
   return (
     <>
-      {/* {((user && token) && ( */}
-      <>
-        <Toaster />
-        <SidebarProvider>
-          <AppSidebar />
-          <div className="container mx-auto px-4 max-w-screen-md border-gray-700 border-x min-h-screen">
-            <main>{children}</main>
-          </div>
-        </SidebarProvider>
-      </>
-      {/* ))} */}
+      {isReady && isLoggedIn() && (
+        <>
+          <Toaster />
+          <SidebarProvider>
+            <AppSidebar />
+            <div className="container mx-auto px-4 max-w-screen-md border-gray-700 border-x min-h-screen">
+              <main>{children}</main>
+            </div>
+          </SidebarProvider>
+        </>
+      )}
     </>
   )
 }

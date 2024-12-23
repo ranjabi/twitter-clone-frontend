@@ -120,7 +120,7 @@ const Home = () => {
     <>
       <div className="flex border p-4">
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarImage src="/default-avatar.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <form

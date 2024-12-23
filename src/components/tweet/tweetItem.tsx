@@ -25,7 +25,7 @@ const TweetItem = (props: {
   return (
     <div className="border flex p-4">
       <Avatar>
-        <AvatarImage src="https://github.com/shadcn.png" />
+        <AvatarImage src="/default-avatar.png" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <div className="flex flex-col ml-3 w-full">

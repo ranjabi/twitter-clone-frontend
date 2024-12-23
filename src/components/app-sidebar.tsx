@@ -19,8 +19,8 @@ import { useRouter } from 'next/router'
 
 const AppSidebar = () => {
   const user = useAuthStore((state) => state.user)
-  const clearAuth = useAuthStore((state) => state.clearAuth)
   const router = useRouter()
+  const logout = useAuthStore((state) => state.logout)
 
   const items = [
     {
@@ -36,8 +36,8 @@ const AppSidebar = () => {
   ]
 
   return (
-    <Sidebar collapsible="none" className="px-4 fixed">
-      <SidebarContent className="min-h-screen">
+    <Sidebar collapsible="none" className="fixed">
+      <SidebarContent className="px-4 min-h-screen">
         <p className="px-4 text-2xl mt-3 font-extrabold">
           <span className="text-sky-500">Twitter</span>Clone
         </p>
@@ -54,17 +54,20 @@ const AppSidebar = () => {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="absolute bottom-0 -left-1 w-full">
+      <SidebarFooter className="absolute bottom-0 w-full">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-16">
                   <div className="flex w-full">
-                    <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
+                    <div className="relative">
+                      <div className="w-10 h-10 bg-blue-500 absolute rounded-full z-10 opacity-50"></div>
+                      <Avatar>
+                        <AvatarImage src="/default-avatar.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                    </div>
                     <div className="ml-3">
                       <p>@{user?.username}</p>
                     </div>
@@ -80,7 +83,7 @@ const AppSidebar = () => {
                   <button
                     className="w-full text-left pl-2 cursor-pointer h-6"
                     onClick={() => {
-                      clearAuth()
+                      logout()
                       router.push('/login')
                     }}
                   >

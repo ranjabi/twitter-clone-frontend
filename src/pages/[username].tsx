@@ -7,14 +7,11 @@ import { useAuthStore } from '@/stores/useAuth'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 const ProfilePage = () => {
   const router = useRouter()
   const { username } = router.query
 
-  const getToken = useAuthStore((state) => state.getToken)
-  const getUser = useAuthStore((state) => state.getUser)
   const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
 
@@ -32,11 +29,6 @@ const ProfilePage = () => {
       }
     }
   }
-
-  useEffect(() => {
-    getToken()
-    getUser()
-  }, [getToken, getUser])
 
   const { isPending, isError, data } = useQuery({
     queryKey: ['profile'],

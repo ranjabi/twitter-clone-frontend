@@ -3,60 +3,38 @@ import { create } from 'zustand'
 
 interface AuthState {
   token: string | undefined
-  getToken: () => string | undefined
-  getTokenFromLocalStorage: () => void
-  setTokenToLocalStorage: (token: string) => void
+  setToken: (token: string) => void
   user: User | undefined
-  isFinished: () => boolean
-  getUser: () => User | undefined
-  // auth = token and user
-  setAuth: (token: string, user: User) => void
-  clearAuth: () => void
-  getUserFromLocalStorage: () => void
-  setUserToLocalStorage: (user: User) => void
+  setUser: (user: User) => void
+  isReady: boolean
+  setIsReady: (isReady: boolean) => void
+  isLoggedIn: () => boolean
+  logout: () => void
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   token: undefined,
-  user: undefined,
-  isFinished: () => {
-    return get().user !== undefined && get().token !== undefined
-  },
-  getTokenFromLocalStorage: () => {
-    const localStorageToken = localStorage.getItem('token')
-    if (localStorageToken != null) {
-      set({ token: localStorageToken })
-    }
-  },
-  setTokenToLocalStorage: (token) => {
+  setToken: (token) => {
     localStorage.setItem('token', token)
+    set({ token })
   },
-  getUserFromLocalStorage: () => {
-    const localStorageUser = localStorage.getItem('user')
-    if (localStorageUser != null) {
-      set({ user: JSON.parse(localStorageUser) })
-    }
-  },
-  setUserToLocalStorage: (user) => {
+  user: undefined,
+  setUser: (user) => {
     localStorage.setItem('user', JSON.stringify(user))
+    set({ user })
   },
-  setAuth: (token, user) => {
-    get().setTokenToLocalStorage(token)
-    get().setUserToLocalStorage(user)
-    set({ user: user })
+  isReady: false,
+  setIsReady: (isReady) => {
+    set({ isReady })
   },
-  getToken: () => {
-    get().getTokenFromLocalStorage()
-    return get().token
+  isLoggedIn: () => {
+    console.log('isLoggedIn:', !!get().user && !!get().token)
+    return !!get().user && !!get().token
   },
-  getUser: () => {
-    get().getUserFromLocalStorage()
-    return get().user
-  },
-  clearAuth: () => {
-    console.log('token clear')
+  logout: () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    set({ token: undefined, user: undefined })
+    set({ user: undefined })
+    set({ token: undefined })
   },
 }))

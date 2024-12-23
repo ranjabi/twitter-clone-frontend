@@ -5,7 +5,7 @@ import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 interface FormInput {
@@ -23,9 +23,11 @@ const Login = () => {
     login(data)
     console.log(data)
   }
-  const setAuth = useAuthStore((state) => state.setAuth)
-  // const token = useAuthStore((state) => state.token)
-  // const user = useAuthStore((state) => state.user)
+  const setToken = useAuthStore((state) => state.setToken)
+  const setUser = useAuthStore((state) => state.setUser)
+  const isReady = useAuthStore((state) => state.isReady)
+  const setIsReady = useAuthStore((state) => state.setIsReady)
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
   const router = useRouter()
 
   const login = async (data: FormInput) => {
@@ -40,7 +42,8 @@ const Login = () => {
         username: res.data.data.username,
         email: res.data.data.email,
       }
-      setAuth(res.data.data.token, user)
+      setToken(res.data.data.token)
+      setUser(user)
       router.push('/')
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -54,63 +57,65 @@ const Login = () => {
     }
   }
 
-  // const getToken = useAuthStore((state) => state.getToken)
-  // const getUser = useAuthStore((state) => state.getUser)
+  useEffect(() => {
+    const userLocalStorage = localStorage.getItem('user')
+    const tokenLocalStorage = localStorage.getItem('token')
+    if (userLocalStorage && tokenLocalStorage) {
+      setUser(JSON.parse(userLocalStorage))
+      setToken(tokenLocalStorage)
+    }
+    setIsReady(true)
+  }, [setIsReady, setUser, setToken])
 
-  // useEffect(() => {
-  //   getToken()
-  //   getUser()
-  // }, [getToken, getUser])
-
-  // useEffect(() => {
-
-  // }, [])
-
-  // useEffect(() => {
-  //   if (user && token) {
-  //     router.push('/')
-  //   }
-  // }, [router, user, token])
+  useEffect(() => {
+    if (isReady) {
+      if (isLoggedIn()) {
+        router.replace('/')
+      }
+    }
+  }, [isReady, isLoggedIn, router])
 
   return (
     <>
-      {/* {((!user || !token )&& ( */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
-        <Input
-          type="email"
-          placeholder="Email"
-          {...register('email', { required: 'Please enter email' })}
-        />
-        {errors.email && <p className="text-red-700">{errors.email.message}</p>}
-        <Input
-          placeholder="Password"
-          {...register('password', { required: 'Please enter password' })}
-        />
-        {errors.password && (
-          <p className="text-red-700">{errors.password.message}</p>
-        )}
-        <Button type="submit" size={'lg'}>
-          Login
-        </Button>
-      </form>
-      {/* ))} */}
+      {isReady && !isLoggedIn() && (
+        <div className="flex items-center h-screen">
+          {/* left */}
+          <div className="w-1/2"></div>
+          {/* right */}
+          <div className="w-1/2">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col gap-y-4"
+            >
+              <Input
+                type="email"
+                placeholder="Email"
+                {...register('email', { required: 'Please enter email' })}
+              />
+              {errors.email && (
+                <p className="text-red-700">{errors.email.message}</p>
+              )}
+              <Input
+                type="password"
+                placeholder="Password"
+                {...register('password', { required: 'Please enter password' })}
+              />
+              {errors.password && (
+                <p className="text-red-700">{errors.password.message}</p>
+              )}
+              <Button type="submit" size={'lg'}>
+                Login
+              </Button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   )
 }
 
 Login.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="max-w-screen-lg mx-auto">
-      <div className="flex items-center h-screen">
-        {/* left */}
-        <div className="w-1/2">
-          <p>left</p>
-        </div>
-        {/* right */}
-        <div className="w-1/2">{page}</div>
-      </div>
-    </div>
-  )
+  return <div className="max-w-screen-lg mx-auto h-screen">{page}</div>
 }
 
 export default Login

@@ -7,7 +7,7 @@ const ProfileHeaderSection = (props: ProfileHeader) => {
       <div className="flex flex-col pb-8">
         <div className="bg-gray-500 h-56"></div>
         <Avatar className="h-32 w-32 -mt-16 ml-4">
-          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarImage src="/default-avatar.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className="px-4 mt-4">
