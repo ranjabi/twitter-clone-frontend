@@ -8,13 +8,17 @@ export interface User {
 
 export interface Tweet {
   id: number
+  userFullName: string
+  username: string
   content: string
+  date: Date
+  likeCount: number
+  replyCount: number
+  retweetCount: number
+  isLiked: boolean
+  userId: number
   createdAt: Date
   modifiedAt: Date
-  userId: number
-  likeCount: number
-  isLiked: boolean
-  username: string
 }
 
 export interface Profile {

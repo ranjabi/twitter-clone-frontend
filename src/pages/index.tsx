@@ -40,23 +40,6 @@ const Home = () => {
     }
   }
 
-  const deleteTweet = async (id: number) => {
-    try {
-      const res = await apiInstance.delete(`/tweets/${id}`)
-      toast({
-        description: res.data.message,
-      })
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast({
-          variant: 'destructive',
-          title: 'Something went wrong',
-          description: error.response?.data.message,
-        })
-      }
-    }
-  }
-
   const onSubmit: SubmitHandler<FormInput> = (data) => {
     console.log(data)
     addTweetMutation.mutate(data)
@@ -97,13 +80,6 @@ const Home = () => {
     },
   })
 
-  const deleteTweetMutation = useMutation({
-    mutationFn: (id: number) => deleteTweet(id),
-    onSettled: async () => {
-      return await queryClient.invalidateQueries({ queryKey: ['feed'] })
-    },
-  })
-
   if (isPendingFeed) {
     return <span>Loading...</span>
   }
@@ -138,6 +114,7 @@ const Home = () => {
       {dataFeed?.map((tweet) => {
         return (
           <TweetItem
+            queryKey={['feed']}
             key={tweet.id}
             tweet={{
               id: tweet.id,
@@ -150,9 +127,10 @@ const Home = () => {
               likeCount: tweet.likeCount,
               isLiked: tweet.isLiked,
               userId: tweet.userId,
+              createdAt: tweet.createdAt,
+              modifiedAt: tweet.modifiedAt,
             }}
             userId={user?.id}
-            deleteTweetMutation={deleteTweetMutation}
           />
         )
       })}

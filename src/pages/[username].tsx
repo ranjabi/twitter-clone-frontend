@@ -59,6 +59,7 @@ const ProfilePage = () => {
       {data?.recentTweets.map((tweet) => {
         return (
           <TweetItem
+            queryKey={['profile', tweet.username]}
             key={tweet.id}
             tweet={{
               id: tweet.id,
@@ -71,6 +72,8 @@ const ProfilePage = () => {
               likeCount: tweet.likeCount,
               isLiked: tweet.isLiked,
               userId: tweet.userId,
+              createdAt: tweet.createdAt,
+              modifiedAt: tweet.modifiedAt,
             }}
             userId={user?.id}
           />
