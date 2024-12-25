@@ -34,6 +34,7 @@ export interface Profile {
   recentTweetsLength: number
   recentTweets: Tweet[]
   isFollowed: boolean
+  nextPageId: number | null
 }
 
 export interface ProfileHeader {

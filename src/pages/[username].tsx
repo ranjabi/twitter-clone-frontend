@@ -4,9 +4,10 @@ import { toast } from '@/hooks/use-toast'
 import { Profile } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import React from 'react'
 
 const ProfilePage = () => {
   const router = useRouter()
@@ -14,9 +15,17 @@ const ProfilePage = () => {
   const user = useAuthStore((state) => state.user)
   const queryClient = useQueryClient()
 
-  const getProfile = async (): Promise<Profile | undefined> => {
+  const getProfile = async ({
+    pageParam,
+  }: {
+    pageParam: number
+  }): Promise<Profile> => {
     try {
-      const res = await apiInstance.get(`/users/${username}`)
+      const res = await apiInstance.get(`/users/${username}`, {
+        params: {
+          page: pageParam,
+        },
+      })
       return res.data.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -26,14 +35,18 @@ const ProfilePage = () => {
           description: error.response?.data.message,
         })
       }
+      throw error
     }
   }
 
-  const { isPending, isError, data } = useQuery({
-    queryKey: ['profile', username],
-    queryFn: getProfile,
-    enabled: !!username,
-  })
+  const { isPending, isError, data, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['profile', username],
+      queryFn: getProfile,
+      enabled: !!username,
+      initialPageParam: 1,
+      getNextPageParam: (lastPage: Profile) => lastPage.nextPageId,
+    })
 
   if (isPending) {
     return <span>Loading...</span>
@@ -47,38 +60,50 @@ const ProfilePage = () => {
     <div>
       {data && (
         <ProfileHeader
-          id={data.id}
-          fullName={data.username}
-          username={data.username}
-          followerCount={data.followerCount}
-          followingCount={data.followingCount}
-          isFollowed={data.isFollowed}
+          id={data.pages[0].id}
+          fullName={data.pages[0].username}
+          username={data.pages[0].username}
+          followerCount={data.pages[0].followerCount}
+          followingCount={data.pages[0].followingCount}
+          isFollowed={data.pages[0].isFollowed}
           queryClient={queryClient}
         />
       )}
-      {data?.recentTweets.map((tweet) => {
-        return (
-          <TweetItem
-            queryKey={['profile', tweet.username]}
-            key={tweet.id}
-            tweet={{
-              id: tweet.id,
-              userFullName: tweet.username,
-              username: tweet.username,
-              content: tweet.content,
-              date: tweet.createdAt,
-              replyCount: 0,
-              retweetCount: 0,
-              likeCount: tweet.likeCount,
-              isLiked: tweet.isLiked,
-              userId: tweet.userId,
-              createdAt: tweet.createdAt,
-              modifiedAt: tweet.modifiedAt,
-            }}
-            userId={user?.id}
-          />
-        )
-      })}
+      {data.pages.map((page, idx) => (
+        <React.Fragment key={page.nextPageId}>
+          {page.recentTweets.map((tweet) => {
+            return (
+              <TweetItem
+                queryKey={['profile', tweet.username]}
+                key={tweet.id}
+                tweet={{
+                  id: tweet.id,
+                  userFullName: tweet.username,
+                  username: tweet.username,
+                  content: tweet.content,
+                  date: tweet.createdAt,
+                  replyCount: 0,
+                  retweetCount: 0,
+                  likeCount: tweet.likeCount,
+                  isLiked: tweet.isLiked,
+                  userId: tweet.userId,
+                  createdAt: tweet.createdAt,
+                  modifiedAt: tweet.modifiedAt,
+                }}
+                userId={user?.id}
+                page={idx}
+              />
+            )
+          })}
+        </React.Fragment>
+      ))}
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage}
+        className="w-full h-16 border-muted border-[1px]"
+      >
+        {hasNextPage ? 'Load more tweets' : 'You reached the end of the tweets'}
+      </button>
     </div>
   )
 }
