@@ -1,5 +1,4 @@
-import { Heart, MessageCircle, Repeat2, Trash2 } from 'lucide-react'
-import { Button } from '../ui/button'
+import { Heart, Trash2 } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import UserAvatar from '../user-avatar'
 import Link from 'next/link'
@@ -180,45 +179,29 @@ const TweetItem = (props: {
         <div className="flex flex-col mt-[2]">
           <p>{tweet.content}</p>
         </div>
-        <div className="flex justify-between mr-32 mt-1">
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-transparent"
-            >
-              <MessageCircle />
-            </Button>
-            <p className="-ml-1">{tweet.replyCount}</p>
-          </div>
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-transparent"
-            >
-              <Repeat2 />
-            </Button>
-            <p className="-ml-1">{tweet.retweetCount}</p>
-          </div>
-          <div className="flex items-center self-end">
-            <div className="flex gap-x-1 items-center hover:text-rose-500 hover:cursor-pointer">
-              <Heart
-                className={`${heartFill} ${heartStroke} ${heartHoverStroke}`}
-                size={16}
-                onClick={() => {
-                  if (!tweet.isLiked) {
-                    likeMutation.mutate(tweet.id)
-                  } else {
-                    unlikeMutation.mutate(tweet.id)
-                  }
-                }}
-              />
-              <p className={`${tweet.isLiked ? 'text-rose-500' : ''}`}>
-                {tweet.likeCount}
-              </p>
-            </div>
-          </div>
+        <div className="flex justify-end pr-32 mt-1">
+          {/* <button className="flex items-center gap-x-1">
+            <MessageCircle size={16} />
+            <p>{tweet.replyCount}</p>
+          </button>
+          <button className="flex items-center gap-x-1">
+            <Repeat2 size={16} />
+            <p>{tweet.retweetCount}</p>
+          </button> */}
+          <button className="flex gap-x-1 items-center hover:text-rose-500 hover:cursor-pointer">
+            <Heart
+              className={`${heartFill} ${heartStroke} ${heartHoverStroke}`}
+              size={16}
+              onClick={() => {
+                if (!tweet.isLiked) {
+                  likeMutation.mutate(tweet.id)
+                } else {
+                  unlikeMutation.mutate(tweet.id)
+                }
+              }}
+            />
+            <p>{tweet.likeCount}</p>
+          </button>
         </div>
       </div>
     </div>
