@@ -21,6 +21,11 @@ export interface Tweet {
   modifiedAt: Date
 }
 
+export interface Feed {
+  tweets: Tweet[]
+  nextPageId: number | null
+}
+
 export interface Profile {
   id: number
   username: string

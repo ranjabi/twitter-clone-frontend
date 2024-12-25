@@ -1,8 +1,12 @@
 import { Heart, Trash2 } from 'lucide-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import UserAvatar from '../user-avatar'
 import Link from 'next/link'
-import { Profile, Tweet } from '@/interfaces/interfaces'
+import { Feed, Profile, Tweet } from '@/interfaces/interfaces'
 import tweetService from '@/services/tweets'
 import axios from 'axios'
 import { toast } from '@/hooks/use-toast'
@@ -11,8 +15,9 @@ const TweetItem = (props: {
   queryKey: string[]
   tweet: Tweet
   userId: number | undefined
+  page: number
 }) => {
-  const { queryKey, tweet, userId } = props
+  const { queryKey, tweet, userId, page: pageIdx } = props
 
   const queryClient = useQueryClient()
   const heartFill = tweet.isLiked ? 'fill-rose-500' : 'fill-transparent'
@@ -23,18 +28,30 @@ const TweetItem = (props: {
     mutationFn: (id: number) => tweetService.like(id),
     onSuccess: () => {
       if (queryKey[0] === 'feed') {
-        queryClient.setQueryData(queryKey, (oldData: Tweet[]) =>
-          oldData
-            ? oldData.map((tweet) =>
-                tweet.id === props.tweet.id
-                  ? {
-                      ...tweet,
-                      isLiked: true,
-                      likeCount: tweet.likeCount + 1,
-                    }
-                  : tweet,
-              )
-            : oldData,
+        queryClient.setQueryData(
+          queryKey,
+          (oldData: InfiniteData<Feed, unknown> | undefined) =>
+            oldData
+              ? {
+                  ...oldData,
+                  pages: oldData.pages.map((page, idx) =>
+                    idx === pageIdx
+                      ? {
+                          ...page,
+                          tweets: page.tweets.map((tweet) =>
+                            tweet.id === props.tweet.id
+                              ? {
+                                  ...tweet,
+                                  isLiked: true,
+                                  likeCount: tweet.likeCount + 1,
+                                }
+                              : tweet,
+                          ),
+                        }
+                      : page,
+                  ),
+                }
+              : oldData,
         )
       } else if (queryKey[0] === 'profile') {
         queryClient.setQueryData(queryKey, (oldData: Profile) =>
@@ -70,18 +87,30 @@ const TweetItem = (props: {
     mutationFn: (id: number) => tweetService.unlike(id),
     onSuccess: () => {
       if (queryKey[0] === 'feed') {
-        queryClient.setQueryData(queryKey, (oldData: Tweet[]) =>
-          oldData
-            ? oldData.map((tweet) =>
-                tweet.id === props.tweet.id
-                  ? {
-                      ...tweet,
-                      isLiked: false,
-                      likeCount: tweet.likeCount - 1,
-                    }
-                  : tweet,
-              )
-            : oldData,
+        queryClient.setQueryData(
+          queryKey,
+          (oldData: InfiniteData<Feed, unknown> | undefined) =>
+            oldData
+              ? {
+                  ...oldData,
+                  pages: oldData.pages.map((page, idx) =>
+                    idx === pageIdx
+                      ? {
+                          ...page,
+                          tweets: page.tweets.map((tweet) =>
+                            tweet.id === props.tweet.id
+                              ? {
+                                  ...tweet,
+                                  isLiked: false,
+                                  likeCount: tweet.likeCount - 1,
+                                }
+                              : tweet,
+                          ),
+                        }
+                      : page,
+                  ),
+                }
+              : oldData,
         )
       } else if (queryKey[0] === 'profile') {
         queryClient.setQueryData(queryKey, (oldData: Profile) =>
@@ -200,7 +229,9 @@ const TweetItem = (props: {
                 }
               }}
             />
-            <p>{tweet.likeCount}</p>
+            <p className={`${tweet.likeCount > 0 ? 'text-rose-500' : ''}`}>
+              {tweet.likeCount}
+            </p>
           </button>
         </div>
       </div>

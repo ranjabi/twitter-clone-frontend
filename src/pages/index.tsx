@@ -1,14 +1,20 @@
 import { useAuthStore } from '@/stores/useAuth'
 import TweetItem from '@/components/tweet/tweetItem'
 import { toast } from '@/hooks/use-toast'
-import { Tweet } from '@/interfaces/interfaces'
+import { Feed } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import axios from 'axios'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import UserAvatar from '@/components/user-avatar'
+import Head from 'next/head'
+import React from 'react'
 
 interface FormInput {
   content: string
@@ -45,11 +51,15 @@ const Home = () => {
     addTweetMutation.mutate(data)
   }
 
-  const getFeed = async (): Promise<Tweet[] | undefined> => {
+  const getFeed = async ({
+    pageParam,
+  }: {
+    pageParam: number
+  }): Promise<Feed> => {
     try {
       const res = await apiInstance.get(`/users/${user?.id}/feed`, {
         params: {
-          page: 1,
+          page: pageParam,
         },
       })
       return res.data.data
@@ -61,16 +71,21 @@ const Home = () => {
           description: error.response?.data.message,
         })
       }
+      throw error
     }
   }
 
   const {
     isPending: isPendingFeed,
     isError: isErrorFeed,
-    data: dataFeed,
-  } = useQuery({
+    data: feed,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ['feed'],
     queryFn: getFeed,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: Feed) => lastPage.nextPageId,
   })
 
   const addTweetMutation = useMutation({
@@ -90,6 +105,9 @@ const Home = () => {
 
   return (
     <>
+      <Head>
+        <title>Home</title>
+      </Head>
       <div className="flex border p-4">
         <UserAvatar userId={user?.id} />
         <form
@@ -111,29 +129,41 @@ const Home = () => {
           </Button>
         </form>
       </div>
-      {dataFeed?.map((tweet) => {
-        return (
-          <TweetItem
-            queryKey={['feed']}
-            key={tweet.id}
-            tweet={{
-              id: tweet.id,
-              userFullName: tweet.username,
-              username: tweet.username,
-              content: tweet.content,
-              date: tweet.createdAt,
-              replyCount: 0,
-              retweetCount: 0,
-              likeCount: tweet.likeCount,
-              isLiked: tweet.isLiked,
-              userId: tweet.userId,
-              createdAt: tweet.createdAt,
-              modifiedAt: tweet.modifiedAt,
-            }}
-            userId={user?.id}
-          />
-        )
-      })}
+      {feed.pages.map((page, idx) => (
+        <React.Fragment key={page.nextPageId}>
+          {page.tweets.map((tweet) => {
+            return (
+              <TweetItem
+                queryKey={['feed']}
+                key={tweet.id}
+                tweet={{
+                  id: tweet.id,
+                  userFullName: tweet.username,
+                  username: tweet.username,
+                  content: tweet.content,
+                  date: tweet.createdAt,
+                  replyCount: 0,
+                  retweetCount: 0,
+                  likeCount: tweet.likeCount,
+                  isLiked: tweet.isLiked,
+                  userId: tweet.userId,
+                  createdAt: tweet.createdAt,
+                  modifiedAt: tweet.modifiedAt,
+                }}
+                userId={user?.id}
+                page={idx}
+              />
+            )
+          })}
+        </React.Fragment>
+      ))}
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage}
+        className="w-full h-16 border-muted border-[1px]"
+      >
+        {hasNextPage ? 'Load more tweets' : 'You reached the end of the feed'}
+      </button>
     </>
   )
 }
