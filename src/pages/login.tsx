@@ -72,6 +72,8 @@ const Login = () => {
   useEffect(() => {
     if (isReady) {
       if (isLoggedIn()) {
+        apiInstance.defaults.headers.common['Authorization'] =
+          'Bearer ' + localStorage.getItem('token')
         router.replace('/')
       }
     }
