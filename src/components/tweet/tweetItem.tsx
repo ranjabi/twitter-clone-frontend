@@ -54,21 +54,30 @@ const TweetItem = (props: {
               : oldData,
         )
       } else if (queryKey[0] === 'profile') {
-        queryClient.setQueryData(queryKey, (oldData: Profile) =>
-          oldData
-            ? {
-                ...oldData,
-                recentTweets: oldData.recentTweets.map((tweet) =>
-                  tweet.id === props.tweet.id
-                    ? {
-                        ...tweet,
-                        isLiked: true,
-                        likeCount: tweet.likeCount + 1,
-                      }
-                    : tweet,
-                ),
-              }
-            : oldData,
+        queryClient.setQueryData(
+          queryKey,
+          (oldData: InfiniteData<Profile, unknown> | undefined) =>
+            oldData
+              ? {
+                  ...oldData,
+                  pages: oldData.pages.map((page, idx) =>
+                    idx === pageIdx
+                      ? {
+                          ...page,
+                          recentTweets: page.recentTweets.map((tweet) =>
+                            tweet.id === props.tweet.id
+                              ? {
+                                  ...tweet,
+                                  isLiked: true,
+                                  likeCount: tweet.likeCount + 1,
+                                }
+                              : tweet,
+                          ),
+                        }
+                      : page,
+                  ),
+                }
+              : oldData,
         )
       }
     },
@@ -113,21 +122,30 @@ const TweetItem = (props: {
               : oldData,
         )
       } else if (queryKey[0] === 'profile') {
-        queryClient.setQueryData(queryKey, (oldData: Profile) =>
-          oldData
-            ? {
-                ...oldData,
-                recentTweets: oldData.recentTweets.map((tweet) =>
-                  tweet.id === props.tweet.id
-                    ? {
-                        ...tweet,
-                        isLiked: false,
-                        likeCount: tweet.likeCount - 1,
-                      }
-                    : tweet,
-                ),
-              }
-            : oldData,
+        queryClient.setQueryData(
+          queryKey,
+          (oldData: InfiniteData<Profile, unknown> | undefined) =>
+            oldData
+              ? {
+                  ...oldData,
+                  pages: oldData.pages.map((page, idx) =>
+                    idx === pageIdx
+                      ? {
+                          ...page,
+                          recentTweets: page.recentTweets.map((tweet) =>
+                            tweet.id === props.tweet.id
+                              ? {
+                                  ...tweet,
+                                  isLiked: false,
+                                  likeCount: tweet.likeCount - 1,
+                                }
+                              : tweet,
+                          ),
+                        }
+                      : page,
+                  ),
+                }
+              : oldData,
         )
       }
     },

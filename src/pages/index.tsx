@@ -22,7 +22,7 @@ interface FormInput {
 
 const Home = () => {
   const user = useAuthStore((state) => state.user)
-  const { register, handleSubmit } = useForm<FormInput>()
+  const { register, handleSubmit, reset } = useForm<FormInput>()
   const queryClient = useQueryClient()
 
   const createTweet = async (data: FormInput) => {
@@ -90,8 +90,9 @@ const Home = () => {
 
   const addTweetMutation = useMutation({
     mutationFn: (data: FormInput) => createTweet(data),
-    onSettled: async () => {
-      return await queryClient.invalidateQueries({ queryKey: ['feed'] })
+    onSuccess: async () => {
+      reset()
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
     },
   })
 
