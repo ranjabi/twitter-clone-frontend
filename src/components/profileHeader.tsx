@@ -1,11 +1,11 @@
-import { ProfileHeader } from '@/interfaces/interfaces'
+import { Profile, ProfileHeader } from '@/interfaces/interfaces'
 import UserAvatar from './user-avatar'
 import { Button } from './ui/button'
 import { useState } from 'react'
 import { apiInstance } from '@/lib/utils'
 import { toast } from '@/hooks/use-toast'
 import axios from 'axios'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const ProfileHeaderSection = (props: ProfileHeader) => {
   console.log('props.isFollowed:', props.isFollowed)
@@ -23,6 +23,8 @@ const ProfileHeaderSection = (props: ProfileHeader) => {
   const [followBtnText, setFollowBtnText] = useState(
     !props.isFollowed ? 'Follow' : 'Following',
   )
+  const queryClient = useQueryClient()
+  const queryKey = ['profile', props.username]
 
   const follow = async () => {
     try {
@@ -62,10 +64,18 @@ const ProfileHeaderSection = (props: ProfileHeader) => {
     mutationFn: follow,
     onSettled: async () => {
       return await props.queryClient.invalidateQueries({
-        queryKey: ['profile', props.username],
+        queryKey: queryKey,
       })
     },
     onSuccess: () => {
+      queryClient.setQueryData(queryKey, (oldData: Profile) =>
+        oldData
+          ? {
+              ...oldData,
+              followingCount: oldData.followingCount + 1,
+            }
+          : oldData,
+      )
       setFollowBtnText('Following')
       setFollowBtnVariant('outline')
     },
@@ -75,10 +85,18 @@ const ProfileHeaderSection = (props: ProfileHeader) => {
     mutationFn: unfollow,
     onSettled: async () => {
       return await props.queryClient.invalidateQueries({
-        queryKey: ['profile', props.username],
+        queryKey: queryKey,
       })
     },
     onSuccess: () => {
+      queryClient.setQueryData(queryKey, (oldData: Profile) =>
+        oldData
+          ? {
+              ...oldData,
+              followingCount: oldData.followingCount - 1,
+            }
+          : oldData,
+      )
       setFollowBtnText('Follow')
       setFollowBtnVariant('default')
     },
