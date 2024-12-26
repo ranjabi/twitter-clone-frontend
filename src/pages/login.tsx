@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/hooks/use-toast'
 import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
@@ -81,10 +82,20 @@ const Login = () => {
 
   return (
     <>
+      <Toaster />
       {isReady && !isLoggedIn() && (
         <div className="flex items-center h-screen">
           {/* left */}
-          <div className="w-1/2"></div>
+          <div className="w-1/2 pr-32">
+            <p>
+              For demonstration purposes, log in with:
+              <br />
+              Email:{' '}
+              <span className="text-muted-foreground">email@email.com</span>
+              <br />
+              Password: <span className="text-muted-foreground">password</span>
+            </p>
+          </div>
           {/* right */}
           <div className="w-1/2">
             <p className="text-3xl font-semibold">Login</p>
@@ -93,7 +104,7 @@ const Login = () => {
             </p>
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-y-6 mt-6"
+              className="flex flex-col gap-y-5 mt-6"
             >
               <div>
                 <label htmlFor="email">Email</label>
@@ -120,8 +131,16 @@ const Login = () => {
                   <p className="text-red-700">{errors.password.message}</p>
                 )}
               </div>
-              <Button type="submit" size={'lg'}>
+              <Button type="submit" size={'lg'} className="mt-4">
                 Login
+              </Button>
+              <Button
+                onClick={() => router.push('/register')}
+                size={'lg'}
+                className=""
+                variant={'outline'}
+              >
+                Register
               </Button>
             </form>
           </div>
