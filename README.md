@@ -1,3 +1,5 @@
+The backend repository can be found at: https://github.com/ranjabi/twitter-clone-backend
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ## Getting Started
