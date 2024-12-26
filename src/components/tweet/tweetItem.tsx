@@ -27,59 +27,31 @@ const TweetItem = (props: {
   const likeMutation = useMutation({
     mutationFn: (id: number) => tweetService.like(id),
     onSuccess: () => {
-      if (queryKey[0] === 'feed') {
-        queryClient.setQueryData(
-          queryKey,
-          (oldData: InfiniteData<Feed, unknown> | undefined) =>
-            oldData
-              ? {
-                  ...oldData,
-                  pages: oldData.pages.map((page, idx) =>
-                    idx === pageIdx
-                      ? {
-                          ...page,
-                          tweets: page.tweets.map((tweet) =>
-                            tweet.id === props.tweet.id
-                              ? {
-                                  ...tweet,
-                                  isLiked: true,
-                                  likeCount: tweet.likeCount + 1,
-                                }
-                              : tweet,
-                          ),
-                        }
-                      : page,
-                  ),
-                }
-              : oldData,
-        )
-      } else if (queryKey[0] === 'profile') {
-        queryClient.setQueryData(
-          queryKey,
-          (oldData: InfiniteData<Profile, unknown> | undefined) =>
-            oldData
-              ? {
-                  ...oldData,
-                  pages: oldData.pages.map((page, idx) =>
-                    idx === pageIdx
-                      ? {
-                          ...page,
-                          recentTweets: page.recentTweets.map((tweet) =>
-                            tweet.id === props.tweet.id
-                              ? {
-                                  ...tweet,
-                                  isLiked: true,
-                                  likeCount: tweet.likeCount + 1,
-                                }
-                              : tweet,
-                          ),
-                        }
-                      : page,
-                  ),
-                }
-              : oldData,
-        )
-      }
+      queryClient.setQueryData(
+        queryKey,
+        (oldData: InfiniteData<Feed | Profile, unknown> | undefined) =>
+          oldData
+            ? {
+                ...oldData,
+                pages: oldData.pages.map((page, idx) =>
+                  idx === pageIdx
+                    ? {
+                        ...page,
+                        tweets: page.tweets.map((tweet) =>
+                          tweet.id === props.tweet.id
+                            ? {
+                                ...tweet,
+                                isLiked: true,
+                                likeCount: tweet.likeCount + 1,
+                              }
+                            : tweet,
+                        ),
+                      }
+                    : page,
+                ),
+              }
+            : oldData,
+      )
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -95,59 +67,31 @@ const TweetItem = (props: {
   const unlikeMutation = useMutation({
     mutationFn: (id: number) => tweetService.unlike(id),
     onSuccess: () => {
-      if (queryKey[0] === 'feed') {
-        queryClient.setQueryData(
-          queryKey,
-          (oldData: InfiniteData<Feed, unknown> | undefined) =>
-            oldData
-              ? {
-                  ...oldData,
-                  pages: oldData.pages.map((page, idx) =>
-                    idx === pageIdx
-                      ? {
-                          ...page,
-                          tweets: page.tweets.map((tweet) =>
-                            tweet.id === props.tweet.id
-                              ? {
-                                  ...tweet,
-                                  isLiked: false,
-                                  likeCount: tweet.likeCount - 1,
-                                }
-                              : tweet,
-                          ),
-                        }
-                      : page,
-                  ),
-                }
-              : oldData,
-        )
-      } else if (queryKey[0] === 'profile') {
-        queryClient.setQueryData(
-          queryKey,
-          (oldData: InfiniteData<Profile, unknown> | undefined) =>
-            oldData
-              ? {
-                  ...oldData,
-                  pages: oldData.pages.map((page, idx) =>
-                    idx === pageIdx
-                      ? {
-                          ...page,
-                          recentTweets: page.recentTweets.map((tweet) =>
-                            tweet.id === props.tweet.id
-                              ? {
-                                  ...tweet,
-                                  isLiked: false,
-                                  likeCount: tweet.likeCount - 1,
-                                }
-                              : tweet,
-                          ),
-                        }
-                      : page,
-                  ),
-                }
-              : oldData,
-        )
-      }
+      queryClient.setQueryData(
+        queryKey,
+        (oldData: InfiniteData<Feed | Profile, unknown> | undefined) =>
+          oldData
+            ? {
+                ...oldData,
+                pages: oldData.pages.map((page, idx) =>
+                  idx === pageIdx
+                    ? {
+                        ...page,
+                        tweets: page.tweets.map((tweet) =>
+                          tweet.id === props.tweet.id
+                            ? {
+                                ...tweet,
+                                isLiked: false,
+                                likeCount: tweet.likeCount - 1,
+                              }
+                            : tweet,
+                        ),
+                      }
+                    : page,
+                ),
+              }
+            : oldData,
+      )
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -163,24 +107,25 @@ const TweetItem = (props: {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => tweetService.deleteTweet(id),
     onSuccess: () => {
-      if (queryKey[0] === 'feed') {
-        queryClient.setQueryData(queryKey, (oldData: Tweet[]) =>
-          oldData
-            ? oldData.filter((tweet) => tweet.id !== props.tweet.id)
-            : oldData,
-        )
-      } else if (queryKey[0] === 'profile') {
-        queryClient.setQueryData(queryKey, (oldData: Profile) =>
+      queryClient.setQueryData(
+        queryKey,
+        (oldData: InfiniteData<Feed | Profile, unknown> | undefined) =>
           oldData
             ? {
                 ...oldData,
-                recentTweets: oldData.recentTweets.filter(
-                  (tweet) => tweet.id !== props.tweet.id,
+                pages: oldData.pages.map((page, idx) =>
+                  idx === pageIdx
+                    ? {
+                        ...page,
+                        tweets: page.tweets.filter(
+                          (tweet) => tweet.id !== props.tweet.id,
+                        ),
+                      }
+                    : page,
                 ),
               }
             : oldData,
-        )
-      }
+      )
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {

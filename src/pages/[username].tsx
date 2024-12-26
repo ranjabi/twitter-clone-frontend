@@ -71,7 +71,7 @@ const ProfilePage = () => {
       )}
       {data.pages.map((page, idx) => (
         <React.Fragment key={page.nextPageId}>
-          {page.recentTweets.map((tweet) => {
+          {page.tweets.map((tweet) => {
             return (
               <TweetItem
                 queryKey={['profile', tweet.username]}

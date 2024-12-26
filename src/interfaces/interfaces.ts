@@ -31,8 +31,8 @@ export interface Profile {
   username: string
   followerCount: number
   followingCount: number
-  recentTweetsLength: number
-  recentTweets: Tweet[]
+  tweetsLength: number
+  tweets: Tweet[]
   isFollowed: boolean
   nextPageId: number | null
 }
