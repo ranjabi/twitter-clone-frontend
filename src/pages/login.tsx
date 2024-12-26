@@ -87,26 +87,39 @@ const Login = () => {
           <div className="w-1/2"></div>
           {/* right */}
           <div className="w-1/2">
+            <p className="text-3xl font-semibold">Login</p>
+            <p className="text-muted-foreground mt-2">
+              Enter your email below to login to your account
+            </p>
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-y-4"
+              className="flex flex-col gap-y-6 mt-6"
             >
-              <Input
-                type="email"
-                placeholder="Email"
-                {...register('email', { required: 'Please enter email' })}
-              />
-              {errors.email && (
-                <p className="text-red-700">{errors.email.message}</p>
-              )}
-              <Input
-                type="password"
-                placeholder="Password"
-                {...register('password', { required: 'Please enter password' })}
-              />
-              {errors.password && (
-                <p className="text-red-700">{errors.password.message}</p>
-              )}
+              <div>
+                <label htmlFor="email">Email</label>
+                <Input
+                  type="email"
+                  placeholder="email@example.com"
+                  className="mt-2"
+                  {...register('email', { required: 'Please enter email' })}
+                />
+                {errors.email && (
+                  <p className="text-red-700">{errors.email.message}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="password">Password</label>
+                <Input
+                  type="password"
+                  className="mt-2"
+                  {...register('password', {
+                    required: 'Please enter password',
+                  })}
+                />
+                {errors.password && (
+                  <p className="text-red-700">{errors.password.message}</p>
+                )}
+              </div>
               <Button type="submit" size={'lg'}>
                 Login
               </Button>
