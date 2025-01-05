@@ -21,16 +21,19 @@ const AppSidebar = () => {
   const user = useAuthStore((state) => state.user)
   const router = useRouter()
   const logout = useAuthStore((state) => state.logout)
+  const currentPage = router.pathname
 
   const items = [
     {
       title: 'Home',
+      plainUrl: '/',
       url: '/',
       icon: House,
     },
     {
       title: 'Profile',
-      url: `/${user?.username}`,
+      plainUrl: '/profile/[username]',
+      url: `/profile/${user?.username}`,
       icon: User,
     },
   ]
@@ -38,16 +41,20 @@ const AppSidebar = () => {
   return (
     <Sidebar collapsible="none" className="fixed">
       <SidebarContent className="px-4 min-h-screen">
-        <p className="px-4 text-2xl mt-3 font-extrabold">
+        <p className="px-4 text-2xl mt-6 font-extrabold">
           <span className="text-sky-500">Twitter</span>Clone
         </p>
-        <SidebarMenu className="mt-2 gap-y-3">
+        <SidebarMenu className="mt-2">
           {items.map((item) => (
             <SidebarMenuItem key={item.title} className="">
-              <SidebarMenuButton asChild className="px-4 h-12">
-                <a href={item.url} className="">
-                  <item.icon />
-                  <span className="text-2xl">{item.title}</span>
+              <SidebarMenuButton
+                asChild
+                className="px-4 h-12"
+                isActive={currentPage === item.plainUrl}
+              >
+                <a href={item.url}>
+                  <item.icon style={{ width: 24, height: 24 }} />
+                  <span className="text-2xl ml-2">{item.title}</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
