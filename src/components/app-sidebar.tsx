@@ -21,20 +21,19 @@ const AppSidebar = () => {
   const user = useAuthStore((state) => state.user)
   const router = useRouter()
   const logout = useAuthStore((state) => state.logout)
-  const currentPage = router.pathname
 
   const items = [
     {
       title: 'Home',
-      plainUrl: '/',
       url: '/',
       icon: House,
+      isSlug: false,
     },
     {
       title: 'Profile',
-      plainUrl: '/profile/[username]',
       url: `/profile/${user?.username}`,
       icon: User,
+      isSlug: true,
     },
   ]
 
@@ -50,7 +49,11 @@ const AppSidebar = () => {
               <SidebarMenuButton
                 asChild
                 className="px-4 h-12"
-                isActive={currentPage === item.plainUrl}
+                isActive={
+                  item.isSlug
+                    ? user?.username === router.query.username
+                    : router.pathname === item.url
+                }
               >
                 <a href={item.url}>
                   <item.icon style={{ width: 24, height: 24 }} />
