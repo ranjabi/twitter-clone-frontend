@@ -46,3 +46,7 @@ export interface ProfileHeader {
   isFollowed: boolean
   queryClient: QueryClient
 }
+
+export interface TweetCreateInput {
+  content: string
+}

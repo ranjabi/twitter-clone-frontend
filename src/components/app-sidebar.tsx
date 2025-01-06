@@ -41,7 +41,7 @@ const AppSidebar = () => {
   return (
     <Sidebar collapsible="none" className="fixed">
       <SidebarContent className="px-4 min-h-screen">
-        <p className="px-4 text-2xl mt-6 font-extrabold">
+        <p className="px-4 text-2xl mt-6 mb-2 font-extrabold">
           <span className="text-sky-500">Twitter</span>Clone
         </p>
         <SidebarMenu className="mt-2">

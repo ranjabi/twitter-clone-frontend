@@ -10,15 +10,23 @@ const unlike = async (id: number) => {
   return res.data
 }
 
+const createTweet = async (content: string) => {
+  const res = await apiInstance.post(`/tweets`, {
+    content,
+  })
+  return res.data
+}
+
 const deleteTweet = async (id: number) => {
   const res = await apiInstance.delete(`/tweets/${id}`)
   return res.data
 }
 
 const tweetService = {
-  like: like,
-  unlike: unlike,
-  deleteTweet: deleteTweet,
+  like,
+  unlike,
+  deleteTweet,
+  createTweet,
 }
 
 export default tweetService

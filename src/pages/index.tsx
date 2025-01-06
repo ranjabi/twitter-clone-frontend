@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/stores/useAuth'
 import TweetItem from '@/components/tweet/tweetItem'
 import { toast } from '@/hooks/use-toast'
-import { Feed } from '@/interfaces/interfaces'
+import { Feed, TweetCreateInput } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
 import {
   useInfiniteQuery,
@@ -9,31 +9,23 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import axios from 'axios'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import UserAvatar from '@/components/user-avatar'
+import { useForm } from 'react-hook-form'
 import Head from 'next/head'
 import React from 'react'
-
-interface FormInput {
-  content: string
-}
+import tweetService from '@/services/tweets'
+import TweetCreate from '@/components/tweet/tweet-create'
 
 const Home = () => {
   const user = useAuthStore((state) => state.user)
-  const { register, handleSubmit, reset } = useForm<FormInput>()
+  const { register, handleSubmit, reset } = useForm<TweetCreateInput>()
   const queryClient = useQueryClient()
 
-  const createTweet = async (data: FormInput) => {
+  const createTweet = async (data: TweetCreateInput) => {
     try {
-      const res = await apiInstance.post(`/tweets`, {
-        content: data.content,
-      })
+      const createdTweet = await tweetService.createTweet(data.content)
       toast({
-        description: res.data.message,
+        description: createdTweet.message,
       })
-      return res.data.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast({
@@ -41,15 +33,17 @@ const Home = () => {
           title: 'Something went wrong',
           description: error.response?.data.message,
         })
-        // throw new Error(error.response?.data.message)
       }
     }
   }
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data)
-    addTweetMutation.mutate(data)
-  }
+  const createTweetMutation = useMutation({
+    mutationFn: (data: TweetCreateInput) => createTweet(data),
+    onSuccess: async () => {
+      reset()
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
+    },
+  })
 
   const getFeed = async ({
     pageParam,
@@ -88,14 +82,6 @@ const Home = () => {
     getNextPageParam: (lastPage: Feed) => lastPage.nextPageId,
   })
 
-  const addTweetMutation = useMutation({
-    mutationFn: (data: FormInput) => createTweet(data),
-    onSuccess: async () => {
-      reset()
-      queryClient.invalidateQueries({ queryKey: ['feed'] })
-    },
-  })
-
   if (isPendingFeed) {
     return <span>Loading...</span>
   }
@@ -109,27 +95,12 @@ const Home = () => {
       <Head>
         <title>Home</title>
       </Head>
-      <div className="flex border p-4">
-        <UserAvatar userId={user?.id} />
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col ml-3 w-full"
-        >
-          <Textarea
-            maxLength={280}
-            className="md:text-2xl border-none focus-visible:ring-0 resize-none h-28"
-            placeholder="What is happening?!"
-            {...register('content', { required: 'Please enter tweet' })}
-          />
-          <Button
-            type="submit"
-            size={'lg'}
-            className="self-end rounded-3xl font-extrabold px-5 mt-4"
-          >
-            Post
-          </Button>
-        </form>
-      </div>
+      <TweetCreate
+        register={register}
+        handleSubmit={handleSubmit}
+        createTweet={(data) => createTweetMutation.mutate(data)}
+        userId={user?.id}
+      />
       {feed.pages.map((page, idx) => (
         <React.Fragment key={page.nextPageId}>
           {page.tweets.map((tweet) => {

@@ -1,19 +1,52 @@
 import ProfileHeader from '@/components/profileHeader'
+import TweetCreate from '@/components/tweet/tweet-create'
 import TweetItem from '@/components/tweet/tweetItem'
 import { toast } from '@/hooks/use-toast'
-import { Profile } from '@/interfaces/interfaces'
+import { Profile, TweetCreateInput } from '@/interfaces/interfaces'
 import { apiInstance } from '@/lib/utils'
+import tweetService from '@/services/tweets'
 import { useAuthStore } from '@/stores/useAuth'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
+import { useForm } from 'react-hook-form'
 
 const ProfilePage = () => {
   const router = useRouter()
   const { username } = router.query
   const user = useAuthStore((state) => state.user)
   const queryClient = useQueryClient()
+  const { register, handleSubmit, reset } = useForm<TweetCreateInput>()
+
+  const createTweet = async (data: TweetCreateInput) => {
+    try {
+      const createdTweet = await tweetService.createTweet(data.content)
+      toast({
+        description: createdTweet.message,
+      })
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast({
+          variant: 'destructive',
+          title: 'Something went wrong',
+          description: error.response?.data.message,
+        })
+      }
+    }
+  }
+
+  const createTweetMutation = useMutation({
+    mutationFn: (data: TweetCreateInput) => createTweet(data),
+    onSuccess: async () => {
+      reset()
+      queryClient.invalidateQueries({ queryKey: ['profile', username] })
+    },
+  })
 
   const getProfile = async ({
     pageParam,
@@ -69,6 +102,12 @@ const ProfilePage = () => {
           queryClient={queryClient}
         />
       )}
+      <TweetCreate
+        register={register}
+        handleSubmit={handleSubmit}
+        createTweet={(data) => createTweetMutation.mutate(data)}
+        userId={user?.id}
+      />
       {data.pages.map((page, idx) => (
         <React.Fragment key={page.nextPageId}>
           {page.tweets.map((tweet) => {
