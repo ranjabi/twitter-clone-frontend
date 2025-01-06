@@ -102,12 +102,14 @@ const ProfilePage = () => {
           queryClient={queryClient}
         />
       )}
-      <TweetCreate
-        register={register}
-        handleSubmit={handleSubmit}
-        createTweet={(data) => createTweetMutation.mutate(data)}
-        userId={user?.id}
-      />
+      {username === user?.username && (
+        <TweetCreate
+          register={register}
+          handleSubmit={handleSubmit}
+          createTweet={(data) => createTweetMutation.mutate(data)}
+          userId={user?.id}
+        />
+      )}
       {data.pages.map((page, idx) => (
         <React.Fragment key={page.nextPageId}>
           {page.tweets.map((tweet) => {
@@ -117,7 +119,7 @@ const ProfilePage = () => {
                 key={tweet.id}
                 tweet={{
                   id: tweet.id,
-                  userFullName: tweet.username,
+                  userFullName: tweet.userFullName,
                   username: tweet.username,
                   content: tweet.content,
                   date: tweet.createdAt,
