@@ -75,7 +75,7 @@ const Login = () => {
       if (isLoggedIn()) {
         apiInstance.defaults.headers.common['Authorization'] =
           'Bearer ' + localStorage.getItem('token')
-        router.replace('/')
+        router.push('/')
       }
     }
   }, [isReady, isLoggedIn, router])

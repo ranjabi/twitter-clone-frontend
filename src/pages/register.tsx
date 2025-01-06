@@ -10,6 +10,7 @@ import { ReactElement, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface FormInput {
+  fullName: string
   username: string
   email: string
   password: string
@@ -36,7 +37,7 @@ const Register = () => {
   const getUser = async (reqBody: FormInput) => {
     try {
       const res = await apiInstance.post('/register', reqBody)
-      router.replace('/login')
+      router.push('/login')
       toast({
         description: res.data.message,
       })
@@ -80,11 +81,22 @@ const Register = () => {
         <p className="text-3xl font-semibold">Register</p>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-y-4 mt-6"
+          className="flex flex-col gap-y-5 mt-6"
         >
           <div>
+            <label htmlFor="fullName">Full Name</label>
+            <Input
+              {...register('fullName', { required: 'Please enter full name' })}
+            />
+            {errors.fullName && (
+              <p className="text-red-700">{errors.fullName.message}</p>
+            )}
+          </div>
+          <div>
             <label htmlFor="username">Username</label>
-            <Input {...register('username')} />
+            <Input
+              {...register('username', { required: 'Please enter username' })}
+            />
             {errors.username && (
               <p className="text-red-700">{errors.username.message}</p>
             )}
@@ -116,6 +128,15 @@ const Register = () => {
           </div>
           <Button type="submit" size={'lg'} className="mt-4">
             Register
+          </Button>
+          <Button
+            onClick={() => {
+              router.push('/login')
+            }}
+            size={'lg'}
+            variant={'outline'}
+          >
+            Login
           </Button>
         </form>
       </div>
