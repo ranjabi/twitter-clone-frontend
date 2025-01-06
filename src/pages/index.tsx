@@ -110,7 +110,7 @@ const Home = () => {
                 key={tweet.id}
                 tweet={{
                   id: tweet.id,
-                  userFullName: tweet.username,
+                  userFullName: tweet.userFullName,
                   username: tweet.username,
                   content: tweet.content,
                   date: tweet.createdAt,
