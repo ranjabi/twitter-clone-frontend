@@ -140,16 +140,16 @@ const TweetItem = (props: {
 
   return (
     <div className="border flex px-4 py-2">
-      <Link href={`/${tweet.username}`}>
+      <Link href={`/profile/${tweet.username}`}>
         <UserAvatar userId={tweet.userId} />
       </Link>
       <div className="flex flex-col ml-3 w-full">
         <div className="flex justify-between gap-x-2">
           <div className="flex w-full">
-            <Link href={`/${tweet.username}`}>
+            <Link href={`/profile/${tweet.username}`}>
               <p className="hover:underline">{tweet.userFullName}</p>
             </Link>
-            <Link href={`/${tweet.username}`}>
+            <Link href={`/profile/${tweet.username}`}>
               <p className="ml-2">@{tweet.username}</p>
             </Link>
             <p className="ml-1">·</p>
