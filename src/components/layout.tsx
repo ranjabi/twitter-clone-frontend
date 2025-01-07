@@ -2,7 +2,6 @@ import { ReactNode, useEffect } from 'react'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import AppSidebar from './app-sidebar'
 import { useAuthStore } from '@/stores/useAuth'
-import { Toaster } from './ui/toaster'
 import { useRouter } from 'next/router'
 import { apiInstance } from '@/lib/utils'
 
@@ -38,15 +37,12 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       {isReady && isLoggedIn() && (
-        <>
-          <Toaster />
-          <SidebarProvider>
-            <AppSidebar />
-            <div className="container mx-auto px-4 max-w-screen-md border-gray-700 border-x min-h-screen">
-              <main>{children}</main>
-            </div>
-          </SidebarProvider>
-        </>
+        <SidebarProvider>
+          <AppSidebar />
+          <div className="container mx-auto px-4 max-w-screen-md border-gray-700 border-x min-h-screen">
+            <main>{children}</main>
+          </div>
+        </SidebarProvider>
       )}
     </>
   )

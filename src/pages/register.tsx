@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/hooks/use-toast'
 import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
@@ -75,9 +74,8 @@ const Register = () => {
   }, [isReady, isLoggedIn, router])
 
   return (
-    <>
-      <Toaster />
-      <div className="w-1/2 mx-auto">
+    <div className="h-screen flex flex-col justify-center items-center border px-4">
+      <div className="w-full md:w-1/2">
         <p className="text-3xl font-semibold">Register</p>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -140,16 +138,12 @@ const Register = () => {
           </Button>
         </form>
       </div>
-    </>
+    </div>
   )
 }
 
 Register.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="max-w-screen-lg h-screen mx-auto flex flex-col justify-center -mt-20">
-      {page}
-    </div>
-  )
+  return <div className="container max-w-screen-lg mx-auto">{page}</div>
 }
 
 export default Register

@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/hooks/use-toast'
 import { apiInstance } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuth'
@@ -82,13 +81,12 @@ const Login = () => {
 
   return (
     <>
-      <Toaster />
       {isReady && !isLoggedIn() && (
-        <div className="flex items-center h-screen">
+        <div className="flex flex-col md:flex-row px-4 lg:px-8 justify-center gap-y-8 md:gap-x-10 items-center h-screen border">
           {/* left */}
-          <div className="w-1/2 pr-32">
+          <div className="w-full md:w-1/2 bg-gray-900 px-3 py-2 rounded-lg">
             <p>
-              For demonstration purposes, log in with:
+              For demo purposes, use:
               <br />
               Email:{' '}
               <span className="text-muted-foreground">email@email.com</span>
@@ -97,7 +95,7 @@ const Login = () => {
             </p>
           </div>
           {/* right */}
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <p className="text-3xl font-semibold">Login</p>
             <p className="text-muted-foreground mt-2">
               Enter your email below to login to your account
@@ -151,7 +149,9 @@ const Login = () => {
 }
 
 Login.getLayout = function getLayout(page: ReactElement) {
-  return <div className="max-w-screen-lg mx-auto h-screen">{page}</div>
+  return (
+    <div className="container max-w-screen-lg mx-auto h-screen">{page}</div>
+  )
 }
 
 export default Login
