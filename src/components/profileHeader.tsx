@@ -107,7 +107,7 @@ const ProfileHeaderSection = (props: ProfileHeader) => {
       <div className="flex flex-col pb-8">
         <div className="bg-gray-500 h-56"></div>
         <div className="flex justify-between px-5">
-          <UserAvatar userId={props.id} classname="h-32 w-32 -mt-[4.5rem]" />
+          <UserAvatar classname="h-32 w-32 -mt-[4.5rem]" />
           <Button
             variant={followBtnVariant}
             onClick={() => {

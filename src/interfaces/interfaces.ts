@@ -9,6 +9,7 @@ export interface User {
 export interface Tweet {
   id: number
   userFullName: string
+  userProfileImage: string
   username: string
   content: string
   date: Date

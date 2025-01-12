@@ -141,7 +141,7 @@ const TweetItem = (props: {
   return (
     <div className="border flex px-4 py-2">
       <Link href={`/profile/${tweet.username}`}>
-        <UserAvatar userId={tweet.userId} />
+        <UserAvatar path={tweet.userProfileImage} />
       </Link>
       <div className="flex flex-col ml-3 w-full">
         <div className="flex justify-between gap-x-2">

@@ -16,11 +16,11 @@ interface TweetCreateProps {
 }
 
 export default function TweetCreate(props: TweetCreateProps) {
-  const { register, handleSubmit, createTweet, userId } = props
+  const { register, handleSubmit, createTweet } = props
 
   return (
     <div className="flex border p-4">
-      <UserAvatar userId={userId} />
+      <UserAvatar />
       <form
         onSubmit={handleSubmit(createTweet)}
         className="flex flex-col ml-3 w-full"

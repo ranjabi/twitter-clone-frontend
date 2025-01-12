@@ -71,7 +71,7 @@ const AppSidebar = () => {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-16">
                   <div className="flex w-full">
-                    <UserAvatar userId={user?.id} classname="w-10 h-10 -mt-1" />
+                    <UserAvatar classname="w-10 h-10 -mt-1" />
                     <div className="ml-3">
                       <p>@{user?.username}</p>
                     </div>
