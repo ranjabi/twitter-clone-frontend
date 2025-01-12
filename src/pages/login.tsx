@@ -89,7 +89,7 @@ const Login = () => {
               For demo purposes, use:
               <br />
               Email:{' '}
-              <span className="text-muted-foreground">email@email.com</span>
+              <span className="text-muted-foreground">johndoe@example.com</span>
               <br />
               Password: <span className="text-muted-foreground">password</span>
             </p>
