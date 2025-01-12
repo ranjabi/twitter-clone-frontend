@@ -120,6 +120,7 @@ const ProfilePage = () => {
                 tweet={{
                   id: tweet.id,
                   userFullName: tweet.userFullName,
+                  userProfileImage: tweet.userProfileImage,
                   username: tweet.username,
                   content: tweet.content,
                   date: tweet.createdAt,
